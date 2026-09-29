@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Credit Cards — Mission Control</title>
+<style>
+:root{--n:#17354f;--b:#2f6f9f;--l:#edf5fa;--i:#202830;--m:#60717e;--bd:#c9d6df;--g:#287454;--r:#a33f39;--y:#b78124}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f5f7f9;color:var(--i);line-height:1.45}
+header{background:var(--n);color:white;padding:22px}.wrap,main{max-width:1050px;margin:auto}header h1{margin:0;font-size:clamp(28px,5vw,44px)}header p{margin:5px 0;color:#dbe8f0}
+main{padding:18px}.progress{display:flex;gap:5px;margin-bottom:16px}.progress i{height:8px;flex:1;background:#dce5eb;border-radius:8px}.progress i.on{background:var(--b)}
+.panel{background:white;border:1px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:16px}.hidden{display:none!important}h2,h3{color:var(--n)}h2{margin-top:0}
+.head{display:flex;gap:10px;align-items:center}.num{width:38px;height:38px;border-radius:50%;background:var(--b);color:white;display:grid;place-items:center;font-weight:800;flex:none}
+.note{background:var(--l);border-left:5px solid var(--b);padding:13px;border-radius:8px;margin:12px 0}.good{border-left-color:var(--g)}.warn{border-left-color:var(--y)}.bad{border-left-color:var(--r)}
+button{font:inherit;min-height:44px;padding:10px 15px;border:0;border-radius:10px;background:var(--b);color:white;font-weight:750;cursor:pointer;margin:4px 4px 4px 0}
+button.choice{display:block;width:100%;text-align:left;background:white;color:var(--i);border:2px solid var(--bd)}button.choice.sel{background:var(--l);border-color:var(--b)}
+button:disabled{opacity:.45}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.stat{background:var(--l);padding:10px;border-radius:10px;text-align:center}.stat b{display:block;font-size:21px;color:var(--n)}
+label{font-weight:700;display:block;margin:12px 0 5px}input,select,textarea{font:inherit;width:100%;padding:10px;border:1px solid #9dacb7;border-radius:8px;min-height:44px}textarea{min-height:80px}
+.fb{padding:10px;margin-top:8px;border-radius:8px;background:#f1f4f6}.fb.ok{border-left:5px solid var(--g)}.fb.no{border-left:5px solid var(--r)}
+.statement{border:2px solid #8799a6;border-radius:8px;padding:16px}.shead{display:flex;justify-content:space-between;border-bottom:3px solid var(--n);padding-bottom:9px}.sample{color:var(--r);font-weight:850}.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}.sum div{border:1px solid var(--bd);padding:8px}.sum b{display:block;color:var(--n)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}th,td{border:1px solid var(--bd);padding:8px;text-align:left}th{background:var(--n);color:white}.small{font-size:13px;color:var(--m)}.pill{display:inline-block;background:var(--l);padding:3px 8px;border-radius:20px;margin:2px}
+hr{border:0;border-top:1px solid var(--bd);margin:24px 0}
+.savebar{position:sticky;top:0;z-index:20;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:12px;display:flex;gap:10px;align-items:center;justify-content:space-between;box-shadow:0 2px 8px #0001}.savebar .status{font-weight:700}.savebar .status.ok{color:var(--g)}.savebar .status.no{color:var(--r)}.idbox{background:#fff9e9;border:2px solid #e4c36f}.actions{display:flex;gap:8px;flex-wrap:wrap}.pdfbtn{background:var(--g)}.emergency{background:#6d7780}@media(max-width:720px){.grid2,.stats,.sum{grid-template-columns:1fr}.shead{display:block}.panel{padding:14px}}
+</style></head>
+<body>
+<header><div class="wrap"><h1>Credit Cards: Mission Control</h1><p>Make decisions. Test consequences. Give advice you can defend.</p></div></header>
+<main>
+<div class="panel idbox" id="identityBox">
+  <h2>Before You Begin</h2>
+  <p>Enter your class pseudonym/student code. Your work is also saved on this Chromebook/browser as a backup.</p>
+  <div class="grid2"><div><label>Student Code</label><input id="studentCode" maxlength="24" autocomplete="off" placeholder="Example: PF-4821"></div><div><label>Confirm Student Code</label><input id="studentCode2" maxlength="24" autocomplete="off" placeholder="Type it again"></div></div>
+  <div class="actions"><button id="beginBtn">Begin / Resume My Work</button></div><div id="identityFb"></div>
+</div>
+<div class="savebar hidden" id="savebar"><div><span class="status" id="saveStatus">Not saved yet</span><div class="small" id="saveDetail">Local backup is active.</div></div><div class="actions"><button class="secondary" id="saveNow" type="button">Save Now</button><button class="pdfbtn" id="pdfBtn" type="button">Save Work as PDF</button><button class="emergency" id="emergencyPdf" type="button">Emergency PDF</button></div></div>
+<div class="progress" id="prog"></div>
+
+<section class="panel step hidden" id="s0"><div class="head"><span class="num">1</span><h2>Myth Challenge</h2></div>
+<p>Choose TRUE or FALSE for all five. Explanations stay hidden until you commit.</p><div id="myths"></div>
+<button id="mythCheck">Submit My Answers</button><div id="mythAll"></div><button class="next hidden" data-to="1">Continue →</button></section>
+
+<section class="panel step hidden" id="s1"><div class="head"><span class="num">2</span><h2>Edpuzzle</h2></div>
+<div class="note"><b>Open Google Classroom.</b><br>Complete the assigned Edpuzzle <b>“How Do Credit Cards Work &amp; Using Credit Cards Wisely.”</b> Complete the video and all embedded questions, then return here.</div>
+<p>Watch for <span class="pill">billing cycle</span><span class="pill">minimum payment</span><span class="pill">interest</span><span class="pill">wise card use</span>.</p>
+<button class="next" data-to="2">I've Finished the Edpuzzle →</button></section>
+
+<section class="panel step hidden" id="s2"><div class="head"><span class="num">3</span><h2>Read a Credit-Card Statement</h2></div>
+<p>Jordan's fictional statement shows what an actual month of purchases can look like.</p>
+<div class="statement"><div class="shead"><div><h3>Summit Peak Bank — Visa</h3><b>Jordan Lee</b><br><span class="small">Statement period: Sept. 1–30</span></div><div class="sample">FICTIONAL SAMPLE<br>FOR CLASSROOM USE</div></div>
+<div class="sum"><div>Previous balance<b>$420.00</b></div><div>Payment received<b>−$300.00</b></div><div>New purchases<b>$607.14</b></div><div>Interest charged<b>$2.70</b></div><div>Statement balance<b>$729.84</b></div><div>Minimum payment<b>$35.00</b></div><div>Payment due date<b>Oct. 25</b></div><div>Credit limit<b>$1,500.00</b></div><div>Available credit<b>$770.16</b></div></div>
+<table><thead><tr><th>Date</th><th>Purchase</th><th>Amount</th></tr></thead><tbody>
+<tr><td>Sep 3</td><td>Shell Gas</td><td>$46.82</td></tr><tr><td>Sep 5</td><td>Spotify</td><td>$11.99</td></tr><tr><td>Sep 7</td><td>King Soopers</td><td>$63.41</td></tr><tr><td>Sep 10</td><td>Chick-fil-A</td><td>$18.76</td></tr><tr><td>Sep 13</td><td>Target</td><td>$84.27</td></tr><tr><td>Sep 16</td><td>Amazon</td><td>$37.95</td></tr><tr><td>Sep 19</td><td>Shell Gas</td><td>$51.08</td></tr><tr><td>Sep 22</td><td>Concert Tickets</td><td>$126.00</td></tr><tr><td>Sep 25</td><td>King Soopers</td><td>$72.36</td></tr><tr><td>Sep 27</td><td>Nike</td><td>$94.50</td></tr></tbody></table>
+<table><tr><th>Purchase APR</th><th>Rewards earned</th><th>YTD interest</th></tr><tr><td>26.99%</td><td>$12.14</td><td>$18.42</td></tr></table></div>
+<label>1. Minimum amount due by Oct. 25?</label><input id="q1" type="number" step=".01" placeholder="$">
+<label>2. Does $770.16 available credit mean Jordan can afford $770.16 more?</label><select id="q2"><option></option><option>No</option><option>Yes</option></select>
+<label>3. What shows Jordan began the month already owing money?</label><select id="q3"><option></option><option>Previous balance: $420</option><option>Rewards: $12.14</option><option>Credit limit: $1,500</option></select>
+<label>4. Largest single purchase?</label><select id="q4"><option></option><option>Concert Tickets — $126</option><option>Nike — $94.50</option><option>Target — $84.27</option></select>
+<label>5. What would you ask Jordan before deciding whether this spending was affordable?</label><textarea id="q5"></textarea>
+<button id="statementCheck">Check My Investigation</button><div id="statementFb"></div><button id="statementNext" class="next hidden" data-to="3">Run the Card →</button></section>
+
+<section class="panel step hidden" id="s3"><div class="head"><span class="num">4</span><h2>Run the Card</h2></div>
+<p>You are Jayden. Your decisions change the month.</p><div id="gameStart"><div class="stats"><div class="stat">Checking<b>$640</b></div><div class="stat">Card limit<b>$1,000</b></div><div class="stat">APR<b>26.99%</b></div><div class="stat">Rewards<b>2%</b></div><div class="stat">Debt<b>$0</b></div></div><button id="play">Start the Month</button></div>
+<div id="game" class="hidden"><div class="stats"><div class="stat">Checking<b id="cash"></b></div><div class="stat">Card balance<b id="bal"></b></div><div class="stat">Available<b id="avail"></b></div><div class="stat">Interest<b id="interest"></b></div><div class="stat">Rewards<b id="rewards"></b></div></div><div class="grid2"><div class="note"><b id="round"></b><h3 id="event"></h3><p id="eventText"></p><div id="choices"></div></div><div><h3>Decision Log</h3><div id="log" class="small"></div></div></div></div>
+<div id="gameEnd" class="hidden"><div id="gameSummary"></div><label>Which decision changed your outcome most? Use a number.</label><textarea id="gr1"></textarea><label>What would you change if you replayed?</label><textarea id="gr2"></textarea><button id="gameReflect">Save Reflection</button><div id="gameFb"></div></div>
+<button id="gameNext" class="next hidden" data-to="4">Continue to Brisk →</button></section>
+
+<section class="panel step hidden" id="s4"><div class="head"><span class="num">5</span><h2>Brisk: Should Jordan Get This Card?</h2></div>
+<div class="note"><b>Open Google Classroom.</b><br>Open the assigned Brisk activity <b>“Should I Get This Card?”</b> Interview Jordan before giving advice. Important facts are not all revealed at once.</div>
+<p>Use at least four accurately: <span class="pill">credit limit</span><span class="pill">budget</span><span class="pill">APR</span><span class="pill">statement balance</span><span class="pill">minimum payment</span><span class="pill">rewards</span><span class="pill">annual fee</span>.</p>
+<button class="next" data-to="5">I've Finished Brisk →</button></section>
+
+<section class="panel step hidden" id="s5"><div class="head"><span class="num">6</span><h2>Rewards Lab</h2></div>
+<div class="grid2"><div><label>Eligible spending ($)</label><input id="rs" type="number" value="500" min="0"><label>Reward rate (%)</label><input id="rr" type="number" value="2" min="0" step=".1"><label>Annual fee ($)</label><input id="rf" type="number" value="0" min="0"><label>Interest paid ($)</label><input id="ri" type="number" value="0" min="0"></div><div class="note" id="rewardOut"></div></div>
+<label>Trap test: $3,000 eligible spending, 3% rewards, $95 annual fee, $220 interest. Positive net result?</label><select id="rewardTrap"><option></option><option>No</option><option>Yes</option></select>
+<button id="rewardCheck">Check</button><div id="rewardFb"></div><button id="rewardNext" class="next hidden" data-to="6">Balance-Transfer Lab →</button></section>
+
+<section class="panel step hidden" id="s6"><div class="head"><span class="num">7</span><h2>Balance-Transfer Lab</h2></div>
+<p>A balance transfer <b>moves debt</b>. It does not erase it.</p><div class="grid2"><div><label>Balance ($)</label><input id="bb" type="number" value="3000"><label>Transfer fee (%)</label><input id="bf" type="number" value="3" step=".1"><label>0% promo months</label><input id="bm" type="number" value="12"><label>Monthly payment ($)</label><input id="bp" type="number" value="300"></div><div class="note" id="balanceOut"></div></div>
+<label>Change the offer to 6 months, 5% fee, $150/month. Biggest concern?</label><select id="bc"><option></option><option>A large balance remains when the promotion ends</option><option>The debt disappears too quickly</option><option>The credit limit becomes income</option></select>
+<button id="balanceCheck">Check</button><div id="balanceFb"></div><button id="balanceNext" class="next hidden" data-to="7">Choose Your Move →</button></section>
+
+<section class="panel step hidden" id="s7"><div class="head"><span class="num">8</span><h2>Choose Your Move — Boss Battle</h2></div><p>Three people. Three problems. <b>Choose a move and defend it.</b></p>
+<h3>A — Rewards Trap</h3><div class="note">Aaliyah earned <b>$180 in rewards</b> but paid <b>$420 in interest</b>. She says, “They literally pay me to use this card.”</div><label>What went wrong, and what should change?</label><textarea id="aText"></textarea><button id="aCheck">Submit A</button><div id="aFb"></div><hr>
+<h3>B — The 0% Offer</h3><div class="note">Marcus owes <b>$3,000 at 25% APR</b>. Offer: <b>0% for 12 months + 3% fee</b>. He can pay <b>$300/month</b> and will stop new charges.</div><label>Transfer fee ($)</label><input id="bFeeAns" type="number"><label>New balance after fee ($)</label><input id="bNewAns" type="number"><label>Choose</label><select id="bMove"><option></option><option>Transfer can make sense under these conditions</option><option>Do not transfer because 0% offers are always bad</option></select><label>Defend it.</label><textarea id="bText"></textarea><button id="bCheck">Submit B</button><div id="bFb"></div><hr>
+<h3>C — I Can't Pay</h3><div class="note">Elena owes <b>$2,400</b>. Minimum: <b>$85</b>. Her hours were cut and she can afford <b>$50</b> this month.</div><label>Best next move</label><select id="cMove"><option></option><option>Contact the issuer now, explain the situation and what she can afford, and ask about options</option><option>Ignore the statement</option><option>Wait for a collector</option><option>Use another card to make the payment</option></select><label>Write the first two sentences of Elena's call.</label><textarea id="cText"></textarea><button id="cCheck">Submit C</button><div id="cFb"></div>
+<button id="bossNext" class="next hidden" data-to="8">Finish →</button></section>
+
+<section class="panel step hidden" id="s8"><div class="head"><span class="num">9</span><h2>Revisit the Myths</h2></div><div id="revisit"></div><label>A first credit card works best when…</label><textarea id="finalText"></textarea><button id="finish">Finish Lesson</button><div id="finishFb"></div><div id="done" class="note good hidden"><b>Mission complete.</b><br>Open the Day 2 10-question quiz in Google Classroom.</div></section>
+</main>
+<script>
+/* DEPLOYMENT: paste your deployed Apps Script /exec URL below. */
+window.CREDIT_CARD_APP_CONFIG={WEB_APP_URL:"https://script.google.com/macros/s/AKfycbz_4ArZEtbSzcsYyW3KZEVt-HSxJi_bKIASXp3E2rDgFPaaZkaMgDvPXCWJY8wtQ8_3/exec",SCHEMA_VERSION:2,LESSON_ID:"U4D2-CREDIT-CARDS-2026"};
+</script>
+<script>
+(()=>{const steps=[...document.querySelectorAll(".step")],P=document.getElementById("prog");steps.forEach((x,i)=>P.appendChild(Object.assign(document.createElement("i"),{className:i?"":"on"})));function go(n){steps.forEach((s,i)=>s.classList.toggle("hidden",i!==n));[...P.children].forEach((x,i)=>x.classList.toggle("on",i<=n));window.scrollTo(0,0)}document.querySelectorAll(".next").forEach(b=>b.onclick=()=>go(+b.dataset.to));
+const M=[["A credit card can be useful even if you never carry a balance.","T","True. A card can be a payment tool without becoming long-term debt."],["Your credit limit tells you how much you can afford to spend.","F","False. The lender sets the limit; your budget determines affordability."],["Making only the minimum payment is an efficient payoff strategy.","F","False. The minimum is a requirement, not a payoff target; a carried balance can create interest."],["Rewards can be a bad deal if interest and fees exceed the rewards.","T","True. Rewards should fit spending already planned and should not justify expensive debt."],["A 0% balance transfer always costs nothing.","F","False. Fees can apply, the promotion expires, and a different APR can follow."]],ans=[];
+M.forEach((m,i)=>myths.insertAdjacentHTML("beforeend",`<div><b>${i+1}. ${m[0]}</b><button class="choice" data-mi="${i}" data-v="T">TRUE</button><button class="choice" data-mi="${i}" data-v="F">FALSE</button><div id="mf${i}"></div></div>`));
+myths.onclick=e=>{let b=e.target.closest("[data-v]");if(!b)return;ans[+b.dataset.mi]=b.dataset.v;b.parentNode.querySelectorAll(".choice").forEach(x=>x.classList.toggle("sel",x===b))};
+mythCheck.onclick=()=>{if(ans.filter(Boolean).length<5){mythAll.innerHTML='<div class="fb no">Answer all five first.</div>';return}M.forEach((m,i)=>{let ok=ans[i]===m[1];document.getElementById("mf"+i).innerHTML=`<div class="fb ${ok?"ok":"no"}"><b>${ok?"Correct":"Not quite"}.</b> ${m[2]}</div>`});mythAll.innerHTML='<div class="fb ok">Submitted. You will see these again at the end.</div>';s0.querySelector(".next").classList.remove("hidden")};
+statementCheck.onclick=()=>{let a=Math.abs((+q1.value||0)-35)<.01,b=q2.value==="No",c=q3.value.startsWith("Previous"),d=q4.value.startsWith("Concert"),e=q5.value.trim().length>=10,n=[a,b,c,d,e].filter(Boolean).length;statementFb.innerHTML=`<div class="fb ${n===5?"ok":"no"}"><b>${n}/5 ready.</b> Minimum = $35. Available credit is not affordability. The $420 previous balance shows debt entering the month. The $126 concert ticket is the largest purchase. An affordability question should ask about income, budget, cash, obligations, or whether purchases were planned.</div>`;if(n===5)statementNext.classList.remove("hidden")};
+const APR=.2699,LIM=1000;let G,I;const EV=[["Gas","You need $55 of gas. It was budgeted.",[["Debit",()=>cashFn(55),"Planned expense paid from checking."],["Card",()=>charge(55,.02),"Planned purchase moved to the card."],["Spend $85 on card",()=>charge(85,.02),"You spent more than planned."]]],["Concert","Friends invite you. Ticket: $120. Not budgeted.",[["Skip",()=>{},"No new spending."],["Debit",()=>cashFn(120),"Checking falls for an unplanned want."],["Card",()=>charge(120,.02),"Unplanned spending becomes card debt until paid."]]],["Car Repair","Necessary repair: $280.",[["Checking",()=>cashFn(280),"Necessary expense uses cash."],["Card",()=>charge(280,.02),"Necessary expense uses credit."],["Split $140/$140",()=>{cashFn(140);charge(140,.02)},"Cost is split."]]],["Hours Cut","Income is $180 lower than expected.",[["Reduce spending",()=>cashFn(180),"Income loss hits checking; no extra borrowing."],["Replace $180 with card spending",()=>{cashFn(180);charge(180,.02)},"Borrowing replaces lost income."],["$180 cash advance",()=>{cashFn(180);charge(180,0);G.fees+=9},"Debt plus simplified $9 fee."]]],["Statement","Minimum payment: $35.","PAY"],["Rewards Weekend","5% back online. You had not planned to shop.",[["Ignore it",()=>{},"No purchase, no debt."],["Spend $100 for rewards",()=>charge(100,.05),"Spent $100 to earn about $5."],["Planned $40 item",()=>charge(40,.05),"Planned purchase earns promotion."]]]];
+function $$(n){return"$"+Math.max(0,n).toFixed(2).replace(".00","")}function cashFn(n){G.cash-=n}function charge(n,r){if(G.bal+n>LIM){G.note=" Charge denied: insufficient available credit.";return}G.bal+=n;G.rew+=n*r}function upd(){cash.textContent=$$(G.cash);bal.textContent=$$(G.bal);avail.textContent=$$(LIM-G.bal);interest.textContent=$$(G.int);rewards.textContent=$$(G.rew)}function lg(a,b){G.logs.push("<b>"+a+"</b>: "+b+(G.note||""));G.note="";log.innerHTML=G.logs.map(x=>"• "+x).join("<br><br>")}function cb(t,f){let b=document.createElement("button");b.className="choice";b.textContent=t;b.onclick=f;choices.appendChild(b)}
+function render(){upd();if(I>=EV.length){game.classList.add("hidden");gameEnd.classList.remove("hidden");gameSummary.innerHTML=`<div class="stats"><div class="stat">Checking<b>${$$(G.cash)}</b></div><div class="stat">Card debt<b>${$$(G.bal)}</b></div><div class="stat">Interest<b>${$$(G.int)}</b></div><div class="stat">Fees<b>${$$(G.fees)}</b></div><div class="stat">Rewards<b>${$$(G.rew)}</b></div></div>`;return}let e=EV[I];round.textContent="Decision "+(I+1)+" of "+EV.length;event.textContent=e[0];eventText.textContent=e[1];choices.innerHTML="";if(e[2]==="PAY"){[["Pay minimum ($35)",35],["Pay $100",100],["Pay statement balance",G.bal]].forEach(x=>cb(x[0],()=>{let p=Math.min(x[1],G.bal,Math.max(0,G.cash));G.cash-=p;G.bal-=p;let z=G.bal*(APR/12);G.bal+=z;G.int+=z;lg(e[0],x[0]+". Estimated interest: "+$$(z));I++;render()}))}else e[2].forEach(x=>cb(x[0],()=>{x[1]();lg(e[0],x[0]+". "+x[2]);I++;render()}))}
+play.onclick=()=>{G={cash:640,bal:0,int:0,rew:0,fees:0,logs:[],note:""};I=0;gameStart.classList.add("hidden");game.classList.remove("hidden");render()};gameReflect.onclick=()=>{let ok=gr1.value.trim().length>=15&&gr2.value.trim().length>=10;gameFb.innerHTML=`<div class="fb ${ok?"ok":"no"}">${ok?"Saved. Notice how payment size, purchases, and surprises interacted.":"Use specific evidence in both reflections."}</div>`;if(ok)gameNext.classList.remove("hidden")};
+function reward(){let s=+rs.value||0,r=(+rr.value||0)/100,f=+rf.value||0,i=+ri.value||0,w=s*r,n=w-f-i;rewardOut.innerHTML=`<h3>Result</h3>Rewards: <b>${$$(w)}</b><br>Fee + interest: <b>${$$(f+i)}</b><br>Rewards minus these costs: <b>${n<0?"−$"+Math.abs(n).toFixed(2):"+"+$$(n)}</b><p class="small">This does not make unplanned spending wise.</p>`}["rs","rr","rf","ri"].forEach(x=>document.getElementById(x).oninput=reward);reward();rewardCheck.onclick=()=>{let ok=rewardTrap.value==="No";rewardFb.innerHTML=`<div class="fb ${ok?"ok":"no"}">${ok?"Correct.":"Reconsider."} $3,000 × 3% = $90 rewards; $95 fee + $220 interest = $315 in these costs.</div>`;if(ok)rewardNext.classList.remove("hidden")};
+function bt(){let b=+bb.value||0,f=(+bf.value||0)/100,m=Math.max(1,+bm.value||1),p=+bp.value||0,fee=b*f,total=b+fee,left=Math.max(0,total-p*m);balanceOut.innerHTML=`<h3>Promo Window</h3>Transfer fee: <b>${$$(fee)}</b><br>New balance: <b>${$$(total)}</b><br>Planned promo payments: <b>${$$(p*m)}</b><br>Balance left: <b>${$$(left)}</b><p><b>${left<=.01?"Plan clears the transferred amount during the promo.":"Debt remains when the promo ends."}</b></p>`}["bb","bf","bm","bp"].forEach(x=>document.getElementById(x).oninput=bt);bt();balanceCheck.onclick=()=>{let ok=bc.value.startsWith("A large");balanceFb.innerHTML=`<div class="fb ${ok?"ok":"no"}">${ok?"Correct.":"Try again."} Ask: 0% on what, for how long, and what fees apply?</div>`;if(ok)balanceNext.classList.remove("hidden")};
+let boss=[0,0,0];function unlock(){if(boss.every(Boolean))bossNext.classList.remove("hidden")}aCheck.onclick=()=>{let ok=aText.value.trim().length>=25;aFb.innerHTML=`<div class="fb ${ok?"ok":"no"}">${ok?"Compare your reasoning:":"Be more specific."} $420 interest is $240 more than $180 rewards. Rewards do not justify expensive debt.</div>`;boss[0]=+ok;unlock()};bCheck.onclick=()=>{let ok=Math.abs((+bFeeAns.value||0)-90)<.01&&Math.abs((+bNewAns.value||0)-3090)<.01&&bMove.value.startsWith("Transfer can")&&bText.value.trim().length>=20;bFb.innerHTML=`<div class="fb ${ok?"ok":"no"}">${ok?"Strong analysis.":"Check the fee, new balance, decision, and explanation."} Fee = $90; new balance = $3,090. At $300/month, the simplified plan can clear it within 12 months.</div>`;boss[1]=+ok;unlock()};cCheck.onclick=()=>{let ok=cMove.value.startsWith("Contact")&&cText.value.trim().length>=25;cFb.innerHTML=`<div class="fb ${ok?"ok":"no"}">${ok?"Good.":"Choose an early direct response and write the call."} Contact the issuer promptly, explain the problem and affordable amount, and ask about options.</div>`;boss[2]=+ok;unlock()};
+bossNext.addEventListener("click",()=>{revisit.innerHTML=M.map((m,i)=>`<div class="note"><b>${i+1}. ${m[0]}</b><br>Your opening answer: <b>${ans[i]==="T"?"TRUE":"FALSE"}</b><br>Correct: <b>${m[1]==="T"?"TRUE":"FALSE"}</b><br>${m[2]}</div>`).join("")});finish.onclick=()=>{let ok=finalText.value.trim().length>=20;finishFb.innerHTML=`<div class="fb ${ok?"ok":"no"}">${ok?"Complete.":"Give specific advice—not just “be responsible.”"}</div>`;if(ok)done.classList.remove("hidden")};
+})();
+</script><script>
+(()=>{
+const C=window.CREDIT_CARD_APP_CONFIG||{}, URL=C.WEB_APP_URL||"", PREFIX="pf_u4d2_", SAVE_DELAY=1200, MAX_RETRIES=4;
+let code="", revision=0, timer=null, saving=false, pending=false, lastRemoteOk=false;
+const $=id=>document.getElementById(id), status=$('saveStatus'), detail=$('saveDetail');
+function cleanCode(v){return (v||"").trim().toUpperCase().replace(/[^A-Z0-9_-]/g,"").slice(0,24)}
+function key(){return PREFIX+(code||"unknown")}
+function setStatus(msg,ok,sub){status.textContent=msg;status.className='status '+(ok?'ok':'no');if(sub)detail.textContent=sub}
+function serialize(){
+ const fields={}; document.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.id||['studentCode','studentCode2'].includes(el.id))return; fields[el.id]=el.type==='checkbox'?el.checked:el.value});
+ const selected=[...document.querySelectorAll('#myths .choice.sel')].map(b=>({i:b.dataset.mi,v:b.dataset.v}));
+ const visible=[...document.querySelectorAll('.step')].findIndex(x=>!x.classList.contains('hidden'));
+ const completed=[...document.querySelectorAll('.next')].filter(b=>!b.classList.contains('hidden')).map(b=>b.id||b.dataset.to||'next');
+ return {schema:C.SCHEMA_VERSION||2,lesson:C.LESSON_ID||'U4D2',student_code:code,revision,client_saved_at:new Date().toISOString(),visible_step:Math.max(0,visible),fields,selected_myths:selected,completed,html_version:'2026-09-28-r2'};
+}
+function saveLocal(){if(!code)return;try{const st=serialize();localStorage.setItem(key(),JSON.stringify(st));localStorage.setItem(PREFIX+'last_code',code);setStatus(lastRemoteOk?'Saved':'Saved on device',true,lastRemoteOk?'Cloud + local backup current.':'Local backup current; cloud save pending.');}catch(e){setStatus('Local save problem',false,'Keep this tab open and use Save Work as PDF if needed.')}}
+function apply(st){if(!st||!st.fields)return false;
+ Object.entries(st.fields).forEach(([id,v])=>{const el=$(id);if(el){if(el.type==='checkbox')el.checked=!!v;else el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));}});
+ (st.selected_myths||[]).forEach(o=>{const b=document.querySelector(`#myths [data-mi="${o.i}"][data-v="${o.v}"]`);if(b)b.click()});
+ // Restore unlocked progression conservatively from the saved visible step.
+ const n=Math.max(0,Math.min(8,Number(st.visible_step)||0));
+ document.querySelectorAll('.step').forEach((el,i)=>el.classList.toggle('hidden',i!==n));
+ [...document.querySelectorAll('#prog i')].forEach((el,i)=>el.classList.toggle('on',i<=n));
+ revision=Math.max(revision,Number(st.revision)||0);return true;
+}
+async function post(action,payload={},timeout=9000){
+ if(!URL||URL.includes('PASTE_WEB_APP_URL'))throw new Error('Backend URL not configured');
+ const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),timeout);
+ try{const r=await fetch(URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,lesson_id:C.LESSON_ID,student_code:code,...payload}),signal:ctl.signal,redirect:'follow',cache:'no-store'});const txt=await r.text();let j;try{j=JSON.parse(txt)}catch(e){throw new Error('Unexpected server response')}if(!j.ok)throw new Error(j.error||'Server error');return j}finally{clearTimeout(t)}
+}
+async function remoteSave(force=false){
+ if(!code){return} if(saving){pending=true;return} saving=true;pending=false;saveLocal();const st=serialize();
+ for(let a=0;a<MAX_RETRIES;a++){
+  try{setStatus('Saving…',true,'Local backup already current.');const j=await post('save_state',{state:st,client_revision:revision});revision=Number(j.revision)||revision+1;lastRemoteOk=true;saveLocal();setStatus('Saved',true,'Cloud + local backup current.');saving=false;if(pending)setTimeout(()=>remoteSave(),250);return}
+  catch(e){lastRemoteOk=false;if(a<MAX_RETRIES-1)await new Promise(r=>setTimeout(r,500*Math.pow(2,a)));else{setStatus('Saved on device',true,'Cloud save did not respond. Work remains backed up locally; Save Now will retry.');}}
+ }
+ saving=false;
+}
+function schedule(){if(!code)return;saveLocal();clearTimeout(timer);timer=setTimeout(()=>remoteSave(),SAVE_DELAY)}
+async function begin(){
+ const a=cleanCode($('studentCode').value),b=cleanCode($('studentCode2').value);if(a.length<3||a!==b){$('identityFb').innerHTML='<div class="fb no">Enter the same student code twice (at least 3 characters).</div>';return}code=a;$('studentCode').value=$('studentCode2').value=code;localStorage.setItem(PREFIX+'last_code',code);
+ let local=null;try{local=JSON.parse(localStorage.getItem(key())||'null')}catch(e){}
+ let remote=null;try{setStatus('Loading…',true,'Checking cloud save and device backup.');const j=await post('load_state');remote=j.state||null;revision=Number(j.revision)||0;lastRemoteOk=true}catch(e){lastRemoteOk=false}
+ const pick=remote&&local ? ((new Date(remote.client_saved_at||0)>=new Date(local.client_saved_at||0))?remote:local) : (remote||local);
+ $('identityBox').classList.add('hidden');$('savebar').classList.remove('hidden');$('s0').classList.remove('hidden');
+ if(pick){apply(pick);setStatus(remote?'Work restored':'Device backup restored',true,remote?'Loaded the newest available saved work.':'Cloud unavailable; restored this browser copy.');$('identityFb').innerHTML=''}else setStatus(lastRemoteOk?'Ready — new work':'Device backup active',true,lastRemoteOk?'Cloud connection verified.':'Cloud unavailable right now; local saving is active.');
+ schedule();
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function report(emergency=false){
+ const st=serialize(), f=st.fields, myths=(st.selected_myths||[]).sort((a,b)=>a.i-b.i).map(x=>`Myth ${Number(x.i)+1}: ${x.v==='T'?'TRUE':'FALSE'}`).join('<br>');
+ const rows=[['Statement minimum',f.q1],['Affordability answer',f.q2],['Previous-balance clue',f.q3],['Largest purchase',f.q4],['Affordability question',f.q5],['Run the Card reflection',f.gr1],['Replay change',f.gr2],['Rewards trap',f.rewardTrap],['Balance-transfer concern',f.bc],['Mission A',f.aText],['Mission B fee',f.bFeeAns],['Mission B new balance',f.bNewAns],['Mission B choice',f.bMove],['Mission B reasoning',f.bText],['Mission C choice',f.cMove],['Mission C call',f.cText],['Final advice',f.finalText]];
+ const body=rows.map(r=>`<tr><th>${esc(r[0])}</th><td>${esc(r[1]||'—')}</td></tr>`).join('');
+ const w=window.open('','_blank');if(!w){alert('Pop-ups are blocked. Allow pop-ups for this page, then try again.');return}w.document.write(`<!doctype html><html><head><title>Credit Cards Day 2 - ${esc(code)}</title><style>body{font-family:Arial,sans-serif;margin:32px;color:#222}h1{color:#17354f}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bbb;padding:8px;text-align:left;vertical-align:top}th{width:28%;background:#eef5fa}.banner{padding:10px;background:#fff4d6;border:1px solid #d9b45b}@media print{button{display:none}}</style></head><body><h1>Credit Cards — Day 2 Mission Report</h1>${emergency?'<div class="banner"><b>Emergency / backup report.</b> This report was generated from the work currently visible on this device.</div>':''}<p><b>Student code:</b> ${esc(code)}<br><b>Generated:</b> ${esc(new Date().toLocaleString())}<br><b>Opening myths:</b><br>${myths||'—'}</p><table>${body}</table><h2>Run the Card ending results</h2><p>${esc(($('gameSummary')||{}).innerText||'Not completed / not available')}</p><p><b>Edpuzzle:</b> completed in Google Classroom as marked by student.<br><b>Brisk Boost:</b> completed in Google Classroom as marked by student.</p><button onclick="window.print()">Print / Save as PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`);w.document.close();
+}
+$('beginBtn').onclick=begin;$('saveNow').onclick=()=>remoteSave(true);$('pdfBtn').onclick=()=>{saveLocal();remoteSave(true);report(false)};$('emergencyPdf').onclick=()=>report(true);
+ document.addEventListener('input',e=>{if(e.target.closest('#identityBox'))return;schedule()});document.addEventListener('change',e=>{if(e.target.closest('#identityBox'))return;schedule()});document.addEventListener('click',e=>{if(e.target.closest('#identityBox')||e.target.closest('#savebar'))return;setTimeout(schedule,80)});
+ window.addEventListener('beforeunload',()=>{saveLocal();if(code&&URL&&!URL.includes('PASTE_WEB_APP_URL')){try{navigator.sendBeacon(URL,new Blob([JSON.stringify({action:'save_state',lesson_id:C.LESSON_ID,student_code:code,state:serialize(),client_revision:revision,beacon:true})],{type:'text/plain;charset=utf-8'}))}catch(e){}}});
+ const last=localStorage.getItem(PREFIX+'last_code');if(last){$('studentCode').value=last;$('studentCode2').value=last}
+})();
+</script></body></html>
